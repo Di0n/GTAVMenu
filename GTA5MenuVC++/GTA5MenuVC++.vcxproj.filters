@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{5765bef7-584e-46b5-a195-55beb42f5a77}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\enums.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\main.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\nativeCaller.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\natives.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\types.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="script.h" />
+    <ClInclude Include="keyboard.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="trainerMenu.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="script.cpp" />
+    <ClCompile Include="keyboard.cpp" />
+    <ClCompile Include="trainerMenu.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="utils.cpp" />
+  </ItemGroup>
+</Project>

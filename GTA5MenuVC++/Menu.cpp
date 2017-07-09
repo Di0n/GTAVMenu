@@ -260,6 +260,8 @@ void Menu::DrawMenu()
 		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlMapPointOfInterest, true);
 
 		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlWhistle, true);
+		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlReplayStartStopRecording, true);
+		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlReplayStartStopRecordingSecondary, true);
 
 		if (currentOption > optionCount) currentOption = optionCount;
 		if (currentOption < 1) currentOption = 1;

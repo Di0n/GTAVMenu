@@ -1,99 +1,43 @@
 #pragma once
-#include "..\inc\natives.h"
-#include "..\inc\types.h"
-#include "..\inc\enums.h"
-#include "..\inc\main.h"
 #include <string>
 
 using std::string;
-
 struct RGBA {
 	int r, g, b, a;
 };
 
-struct Point2D {
-	float x, y;
-};
-
-//extern float menux;
-//extern RGBA titleText;
-//extern RGBA titleRect;
-//extern RGBA scroller;
-//extern RGBA options;
-//extern RGBA optionsrect;
-
+#define MAIN_MENU_NAME "main_menu"
 class Menu {
 public:
-	Menu() {};
-	Menu(RGBA titleText, RGBA titleRect, RGBA scroller, RGBA options, RGBA optionsRect) : titleText(titleText), titleRect(titleRect), scroller(scroller), options(options), optionsRect(optionsRect)
-	{
-		tickDelay = GetTickCount();
-	};
-	~Menu() {};
+	static string GetCurrentMenu();
+	static void _ChangeMenu(const string& menuname);
+	static void MenuBack();
 
-	char* GetCurrentMenuName() const;
+	static void Title(const string& title);
+	static bool Option(const string& option);
+	static bool MenuOption(const string& option, const string& menu);
+	static bool IntOption(const string& option, int *var, int min, int max, int stepSize = 1);
+	static bool FloatOption(const string& option, float *var, float min, float max, float stepSize = 0.1f);
+	static bool BoolOption(const string& option, bool *var);
 
-	void _ChangeMenu(char* menuName);
-	void MenuBack();
+	static void DrawMenu();
+	static void UpdateInput();
 
-	void SetTitle(char* title);
-
-	bool Option(char* option);
-	bool MenuOption(char* option, char* menu);
-	bool BoolOption(char* option);
-	bool IntOption(char* option, int *var, int min, int max, int step = 1);
-	bool FloatOption(char* option, float *var, float min, float max, float step = 0.1);
-	bool BoolSpriteOption(char* option, bool b00l, char* category, char* spriteOn, char* spriteOff);
-	bool IntArray(char* option, int display[], int *PlaceHolderInt);
-	bool FloatArray(char* option, float display[], int *PlaceHolderInt);
-	bool CharArray(char* option, char* display[], int *PlaceHolderInt);
-
-	void EndMenu();
-	void ProcessMenuInteraction();
-	/*static bool currentMenu(char* menuname);
-	static void changeMenu(char* menuname);
-	static void backMenu();
-
-	static void drawText(char* text, int font, float x, float y, float scalex, float scaley, RGBA RGBA, bool center);
-	static void drawRect(float x, float y, float width, float height, RGBA RGBA);
-	static void drawSprite(char* Streamedtexture, char* textureName, float x, float y, float width, float height, float rotation, RGBA RGBA);
-
-	static void Title(char* title);
-	static bool Option(char* option);
-	static bool MenuOption(char* option, char* menu);
-	static bool IntOption(char* option, int *var, int min, int max, int step = 1);
-	static bool FloatOption(char* option, float *var, float min, float max, float step = 0.1);
-	static bool BoolOption(char* option, bool *b00l);
-	static bool BoolSpriteOption(char* option, bool b00l, char* category, char* spriteOn, char* spriteOff);
-	static bool IntArray(char* option, int display[], int *PlaceHolderInt);
-	static bool FloatArray(char* option, float display[], int *PlaceHolderInt);
-	static bool CharArray(char* option, char* display[], int *PlaceHolderInt);*/
-
-	/*static void Load();
-
-	static void endMenu();
-	static void checkKeys();*/
+	static void SetColours(RGBA titleTextClr, RGBA titleRectClr, RGBA selectionClr, RGBA optionClr, RGBA optionsRectClr);
 private:
-	void _DrawText(string text, int fontType, Point2D textPos, Point2D textScale, RGBA colour, BOOL centered) const;
-	void DrawRect(Point2D rectPos, float width, float height, RGBA colour) const;
-	void DrawSprite(char* streamedTexture, char* textureName, Point2D pos, float width, float height, float rotation, RGBA colour) const;
+	static enum MenuSounds
+	{
+		BACK,
+		SELECT,
+		QUIT,
+		NAV_UP_DOWN,
+		YES,
+		NO,
+		CONTINUE
+	};
 
-	void PlayMenuBeep() const;
-
-	float menuX;
-	RGBA titleText;
-	RGBA titleRect;
-	RGBA scroller;
-	RGBA options;
-	RGBA optionsRect;
-
-	DWORD tickDelay;
-	int menuLevel;
-	bool optionPressed;
-	int selectedOption;
-	int optionCount;
-
-	bool leftPressed, rightPressed;
-
-	char* currentMenu;
+	static void _DrawText(string text, int font, float x, float y, float scaleX, float scaleY, RGBA colour, bool centered);
+	static void DrawRect(float x, float y, float width, float height, RGBA colour);
+	static void DrawSprite(char* Streamedtexture, char* textureName, float x, float y, float width, float height, float rotation, RGBA colour);
+	static void PlayMenuSound(const MenuSounds sound);
 };

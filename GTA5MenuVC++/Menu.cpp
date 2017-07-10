@@ -1,39 +1,34 @@
 #include "Menu.h"
-#include "..\inc\natives.h"
-#include "..\inc\types.h"
-#include "..\inc\enums.h"
-#include "..\inc\main.h"
 #include "keyboard.h"
-#include <array>
 
-#define MAX_MENU_COUNT 100
-#define MAX_OPTION_COUNT 100
+Menu::Menu()
+{
+	currentMenu = "";
+	menuLevel = 0;
+	tickDelay = GetTickCount();
 
-const float menuX = 0.2f;
-RGBA titleTextColour = { 0, 0, 0, 255 };
-RGBA titleRectColour = { 81, 200, 188, 255 }; //{ 191, 63, 63, 255 };  // orig: { 255, 200, 0, 255 };
-RGBA selectionColour = { 80, 80, 80, 200 };
-RGBA optionColour = { 255, 255, 255, 255 };
-RGBA optionsRectColour = { 81, 172, 200, 60 }; // orig { 255, 220, 30, 60 };
+	titleTextColour = { 0, 0, 0, 255 };
+	titleRectColour = { 81, 200, 188, 255 }; //{ 191, 63, 63, 255 };  // orig: { 255, 200, 0, 255 };
+	selectionColour = { 80, 80, 80, 200 };
+	optionColour = { 255, 255, 255, 255 };
+	optionsRectColour = { 81, 172, 200, 60 };
+}
 
-int optionCount;
-int currentOption;
-bool optionPressed;
-bool leftPressed;
-bool rightPressed;
-bool downPressed;
-bool upPressed;
-
-std::array<string, MAX_MENU_COUNT> menuList;
-string currentMenu = "";
-
-std::array<int, MAX_OPTION_COUNT> optionList;
-int menuLevel = 0;
-
-int tickDelay = GetTickCount();
+Menu::Menu(const RGBA& titleTextColour, const RGBA& titleRectColour, const RGBA& selectionColour, const RGBA& optionColour, const RGBA& optionsRectColour)
+{
+	currentMenu = "";
+	menuLevel = 0;
+	tickDelay = GetTickCount();
+	
+	this->titleTextColour = titleTextColour;
+	this->titleRectColour = titleRectColour;
+	this->selectionColour = selectionColour;
+	this->optionColour = optionColour;
+	this->optionsRectColour = optionsRectColour;
+}
 
 
-string Menu::GetCurrentMenu()
+string Menu::GetCurrentMenu() const
 {
 	return currentMenu;
 }
@@ -53,10 +48,11 @@ void Menu::MenuBack()
 	currentMenu = menuList[menuLevel];
 	currentOption = optionList[menuLevel];
 }
-void Menu::Title(const string& title)
+
+void Menu::Title(const string& title, const eFont font)
 {
 	optionCount = 0;
-	_DrawText(title, 7, menuX, 0.095f, 0.85f, 0.85f, titleTextColour, true);
+	_DrawText(title, font, menuX, 0.095f, 0.85f, 0.85f, titleTextColour, true);
 	DrawRect(menuX, 0.1175f, 0.23f, 0.085f, titleRectColour);
 }
 
@@ -135,14 +131,14 @@ bool Menu::IntOption(const string& option, int *var, int min, int max, int stepS
 bool Menu::FloatOption(const string& option, float *var, float min, float max, float stepSize)
 {
 	Option(option);
-	
+
 	char buf[100];
 	_snprintf_s(buf, sizeof(buf), "%.2f", *var);
 
 	if (currentOption <= 16 && optionCount <= 16)
-		_DrawText("<" + static_cast<string>(buf) + ">", 6, menuX + 0.068f, (optionCount * 0.035f + 0.125f), 0.5f, 0.5f, optionColour, true);
+		_DrawText("<" + static_cast<string>(buf)+">", 6, menuX + 0.068f, (optionCount * 0.035f + 0.125f), 0.5f, 0.5f, optionColour, true);
 	else if ((optionCount > (currentOption - 16)) && optionCount <= currentOption)
-		_DrawText("<" + static_cast<string>(buf) + ">", 6, menuX + 0.068f, ((optionCount - (currentOption - 16)) * 0.035f + 0.125f), 0.5f, 0.5f, optionColour, true);
+		_DrawText("<" + static_cast<string>(buf)+">", 6, menuX + 0.068f, ((optionCount - (currentOption - 16)) * 0.035f + 0.125f), 0.5f, 0.5f, optionColour, true);
 
 	if (currentOption == optionCount) {
 		if (leftPressed) {
@@ -161,7 +157,7 @@ bool Menu::FloatOption(const string& option, float *var, float min, float max, f
 		}
 		if (*var > max) *var = min;
 	}
-	
+
 	if (optionPressed && currentOption == optionCount)
 		return true;
 	else return false;
@@ -232,14 +228,14 @@ void Menu::DrawMenu()
 			}
 		}
 
+		CAM::SET_CINEMATIC_BUTTON_ACTIVE(0);
 
 		UI::HIDE_HELP_TEXT_THIS_FRAME();
-		CAM::SET_CINEMATIC_BUTTON_ACTIVE(0);
-		UI::HIDE_HUD_COMPONENT_THIS_FRAME(10);
 		UI::HIDE_HUD_COMPONENT_THIS_FRAME(6);
 		UI::HIDE_HUD_COMPONENT_THIS_FRAME(7);
-		UI::HIDE_HUD_COMPONENT_THIS_FRAME(9);
 		UI::HIDE_HUD_COMPONENT_THIS_FRAME(8);
+		UI::HIDE_HUD_COMPONENT_THIS_FRAME(9);
+		UI::HIDE_HUD_COMPONENT_THIS_FRAME(10);
 
 		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlNextCamera, true);
 
@@ -260,6 +256,9 @@ void Menu::DrawMenu()
 		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlMapPointOfInterest, true);
 
 		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlWhistle, true);
+		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlReplayStartStopRecording, true);
+		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlReplayStartStopRecordingSecondary, true);
+		CONTROLS::DISABLE_CONTROL_ACTION(2, ControlReplayTools, true);
 
 		if (currentOption > optionCount) currentOption = optionCount;
 		if (currentOption < 1) currentOption = 1;
@@ -335,7 +334,7 @@ void Menu::UpdateInput()
 	}
 }
 
-void Menu::_DrawText(string text, int font, float x, float y, float scaleX, float scaleY, RGBA colour, bool centered)
+void Menu::_DrawText(string text, int font, float x, float y, float scaleX, float scaleY, RGBA colour, bool centered) const
 {
 	UI::SET_TEXT_FONT(font);
 	UI::SET_TEXT_SCALE(scaleX, scaleY);
@@ -346,18 +345,18 @@ void Menu::_DrawText(string text, int font, float x, float y, float scaleX, floa
 	UI::_DRAW_TEXT(x, y);
 }
 
-void Menu::DrawRect(float x, float y, float width, float height, RGBA colour)
+void Menu::DrawRect(float x, float y, float width, float height, RGBA colour) const
 {
 	GRAPHICS::DRAW_RECT(x, y, width, height, colour.r, colour.g, colour.b, colour.a);
 }
 
-void Menu::DrawSprite(char* Streamedtexture, char* textureName, float x, float y, float width, float height, float rotation, RGBA RGBA)
+void Menu::DrawSprite(char* Streamedtexture, char* textureName, float x, float y, float width, float height, float rotation, RGBA RGBA) const
 {
 	if (!GRAPHICS::HAS_STREAMED_TEXTURE_DICT_LOADED(Streamedtexture)) GRAPHICS::REQUEST_STREAMED_TEXTURE_DICT(Streamedtexture, false);
 	else GRAPHICS::DRAW_SPRITE(Streamedtexture, textureName, x, y, width, height, rotation, RGBA.r, RGBA.g, RGBA.b, RGBA.a);
 }
 
-void Menu::PlayMenuSound(const MenuSounds sound)
+void Menu::PlayMenuSound(const MenuSounds sound) const
 {
 	switch (sound)
 	{
@@ -387,11 +386,27 @@ void Menu::PlayMenuSound(const MenuSounds sound)
 	}
 }
 
-void Menu::SetColours(RGBA titleTextClr, RGBA titleRectClr, RGBA selectionClr, RGBA optionClr, RGBA optionsRectClr)
+void Menu::SetTitleTextColour(const RGBA& titleTextClr)
 {
 	titleTextColour = titleTextClr;
+}
+
+void Menu::SetTitleRectColour(const RGBA& titleRectClr)
+{
 	titleRectColour = titleRectClr;
+}
+
+void Menu::SetSelectionColour(const RGBA& selectionClr)
+{
 	selectionColour = selectionClr;
-	optionColour = optionClr;
+}
+
+void Menu::SetOptionsColour(const RGBA& optionsClr)
+{
+	optionColour = optionsClr;
+}
+
+void Menu::SetOptionsRectColour(const RGBA& optionsRectClr)
+{
 	optionsRectColour = optionsRectClr;
 }
